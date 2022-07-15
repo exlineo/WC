@@ -6,6 +6,10 @@ export class CPEvent extends HTMLElement {
         this.addEventListener('CPValidMsg', ev => this.setValidationMsg(ev));
         this.addEventListener('CPInfoMsg', ev => this.setInfoMsg(ev));
     }
+    /** Throwing event to init */
+    setInit() {
+        this.dispatchEvent(new CustomEvent('init'));
+    }
     /** Throwing error message */
     setErrorEvent(msg) {
         this.dispatchEvent(new CustomEvent('CPErrorMsg', { detail: msg }));

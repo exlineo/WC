@@ -2,13 +2,25 @@
 <html>
     <head>
         <title>Test composants</title>
+        <style>
+            body{
+                margin:0;
+                height:100vh;
+            }
+            cp-caroussel::part(button){
+                background-color: brown;
+            }
+            cp-caroussel::part(button):hover{
+                background-color: orangered;
+            }
+        </style>
     </head>
     <body>
-        <cp-caroussel data-index="cp-caroussel"></cp-caroussel>
+        <cp-caroussel data-params='{"h":"100%"}' data-index="cp-caroussel"></cp-caroussel>
         <!-- <cp-slideshow data-index="cp-slideshow"></cp-slideshow> -->
         <script src="./dist/index.js" type="module"></script>
         <script>
-            const carroussel = [
+            const caroussel = [
                 {
                     title:"Slide 1",
                     subtitle:"Sous titre 1",
@@ -32,7 +44,7 @@
                     }
                 }
             ];
-            localStorage.setItem('cp-carroussel', JSON.stringify(carroussel));
+            localStorage.setItem('cp-caroussel', JSON.stringify(caroussel));
         </script>
     </body>
 </html>

@@ -1,25 +1,26 @@
 import { LocalStore } from "./LocalStore.js";
 /** Hériter de possibilités de gestion des données */
 export class LocalDB extends LocalStore {
-    constructor(i = "WebComponent") {
+    constructor() {
         super();
     }
     /** Initialiser la base de données */
     initLocalDb() {
         this.indexedDB = window.indexedDB;
-        this.open = this.indexedDB.open('WebComponentDB', 1); // Récupérer la version 1 de la BDD Web Component
-        // Create the schema
+        this.open = this.indexedDB.open('WebCPDB', 1); // Récupérer la version 1 de la BDD Web Component
+        /** Create the schema */
         this.open.onupgradeneeded = (ev = null) => {
             console.log("onupgrade");
             this.db = this.open.result;
-            this.store = this.db.createObjectStore("WebComponentStore", { keyPath: "id" });
-            this.index = this.store.createIndex(this.index, []);
+            this.store = this.db.createObjectStore("WebCPStore", { keyPath: "id" });
+            this.indexDB = this.store.createIndex(this.index, []);
         };
+        /** Success on DB opening */
         this.open.onsuccess = () => {
             // Start a new transaction
             this.db = this.open.result;
-            this.tx = this.db.transaction("WebComponentStore", "readwrite");
-            this.store = this.tx.objectStore("WebComponentStore");
+            this.tx = this.db.transaction("WebCPStore", "readwrite");
+            this.store = this.tx.objectStore("WebCPStore");
             // this.index = this.store.index(this.index);
             // Close the db when the transaction is done
             this.tx.oncomplete = () => {
@@ -28,6 +29,7 @@ export class LocalDB extends LocalStore {
             };
             this.tx.onerror = (ev = null) => {
                 console.warn(this.tx.error);
+                this.setErrorEvent(this.tx.error);
             };
             console.log("Ouverture de la base réussie");
         };

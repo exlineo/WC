@@ -5,7 +5,9 @@ export interface SlideI{
     subtitle?:string;
     description?:string;
     media:MediaI;
+    url?:string;
     type:Types;
+    style?:StyleI;
 }
 /** Media type */
 export interface MediaI{
@@ -14,6 +16,15 @@ export interface MediaI{
     description?:string;
     url:string;
     legende?:string;
+}
+/** Styling HTML */
+export interface StyleI{
+    bg?:string;
+    color?:string;
+}
+/** Params interface */
+export interface ParamsI{
+    h:string;
 }
 /** Slides types enum */
 enum Types{
