@@ -1,53 +1,54 @@
-import { LocalDB } from '../LocalDB.js';
-import { LocalStore } from '../LocalStore.js';
+import { CustomHTML } from '../CustomHTML.js';
+import { SlideI } from './models/Slide.js';
 
-export class CPCaroussel extends LocalStore{
+export class CPCaroussel extends CustomHTML {
   /** Liste des slides à afficher dans le HTML */
-  slides;
-  shadow = this.attachShadow({mode: 'open'});
+  slides: Array<SlideI> = [];
+  shadow = this.attachShadow({ mode: 'open' });
   /** Hauteur du slider */
   h;
   /** Numéro du slide à en cours d'affichage */
-  slide = 0;
+  slideIndex = 0;
+  /** HTML Elements to manipulate */
+  main: HTMLElement = document.createElement('main');
+  section: HTMLElement = document.createElement('section');
 
   static get observedAttributes() {
     return ['data-h', 'data-slides', 'data-index'];
   }
 
-  constructor(){
+  constructor() {
     super();
     this.h = '500px';
-    this.index = this.dataset.index;
+    this.index = this.dataset['index'] as string; // Get index of data in dataset
   }
   /** Agir lorsque l'élément personnalisé est initialisé */
   connectedCallback() {
-    this.dataset.h ? this.h = this.dataset.h + 'px' : this.h = '500px';
+    this.dataset['h'] ? this.h = this.dataset['h'] + 'px' : this.h = '500px';
     this.setStyles(); // Ajouter les styles des slides
 
     this.init(); // Récupération des données pour afficher un slide
   };
   /** Initialisation du caroussel */
-  init(){
-      this.main = document.createElement('main');
-      this.section = document.createElement('section');
-      this.dataset.index && !this.dataset.slides ? this.getStore() : this.setStore(this.dataset.slides);
-
-      this.addSlides();
+  init() {
+    this.getIndexData();
+    this.dataset['index'] && !this.dataset['slides'] ? this.slides = this.getStore('CPCaroussel') as Array<SlideI> : this.setStore('CPCaroussel', this.dataset['slides']);
+    // Réinitialiser les données au cas d'une mise à jour
+    if (this.getElementsByTagName('article')) {
+      this.main.innerHTML = '';
+      this.slideIndex = 0;
+    }
+    this.addSlides();
   }
   /** Créer les slides (ou mettre en jour) */
-  addSlides(){
-    // Réinitialiser les données au cas d'une mise à jour
-    if(this.getElementsByTagName('article')){
-      this.main.innerHTML = '';
-      this.slide = 0;
-    }
-    this.data.forEach(s => {
+  addSlides() {
+    this.slides.forEach((s: any) => {
       let article = document.createElement('article');
       article.style.backgroundImage = `url('${s.img}')`;
       article.innerHTML = `
           <div style="background-color:${s.bgColor}">
               <h3>${s.title}</h3>
-              <h5>${s.accroche.substring(0,120)}...</h5>
+              <h5>${s.accroche.substring(0, 120)}...</h5>
 
               <button href=${s.url}">voir plus</button>
           </div>
@@ -68,7 +69,7 @@ export class CPCaroussel extends LocalStore{
       <span class="arrow-slide"></span>
     </a>
     `;
-    prev.addEventListener('click', ()=>this.pagination(-1));
+    prev.addEventListener('click', () => this.pagination(-1));
     this.main.appendChild(prev);
 
     // Ajouter les slides dans la section principale
@@ -83,7 +84,7 @@ export class CPCaroussel extends LocalStore{
       <span class="arrow-slide"></span>
     </a>
     `;
-    next.addEventListener('click', ()=>this.pagination(1));
+    next.addEventListener('click', () => this.pagination(1));
     this.main.appendChild(next);
 
     this.shadow.appendChild(this.main);
@@ -96,33 +97,33 @@ export class CPCaroussel extends LocalStore{
     console.log('Slider bougé ailleurs.');
   }
   /** Surveiller des infos */
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     console.log('Attribut changé.', name, newValue);
-    switch(name){
+    switch (name) {
       case 'h':
-        this.dataset.h ? this.h = this.dataset.h + 'px' : this.h = '500px';
+        this.dataset['h'] ? this.h = this.dataset['h'] + 'px' : this.h = '500px';
         break;
       case 'slides':
-        this.data = JSON.parse(this.dataset.slides);
+        this.data = JSON.parse(this.dataset['slides']!);
         break;
     }
   }
   /** Gérer l'affichage des slides. n = orientation (1, -1) */
-  pagination(n){
-    if(n > 0 && this.slide < this.data.length-1){
-      this.slide ++;
-    } else if(n < 0 && this.slide > 0){
-      this.slide --
+  pagination(n: number) {
+    if (n > 0 && this.slideIndex < this.data.length - 1) {
+      this.slideIndex++;
+    } else if (n < 0 && this.slideIndex > 0) {
+      this.slideIndex--
     }
     // Positionner des éléments
     this.setPos();
   }
   /** Calculer la position du slide */
-  setPos(){
-    this.section.scroll({top:0, left:(this.section.offsetWidth * this.slide), behavior: 'smooth'});
+  setPos() {
+    this.section.scroll({ top: 0, left: (this.section.offsetWidth * this.slideIndex), behavior: 'smooth' });
   }
   /** Céer des styles dans l'éléement */
-  setStyles(){
+  setStyles() {
     let styles = document.createElement('style');
     styles.textContent = `
         main{
@@ -264,7 +265,7 @@ export class CPCaroussel extends LocalStore{
           }
         }
   `;
-  this.shadow.appendChild(styles);
+    this.shadow.appendChild(styles);
   }
 }
 /** Define WebComponent */

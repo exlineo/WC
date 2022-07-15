@@ -1,14 +1,16 @@
-import { LocalDB } from '../LocalDB.js';
+import { CustomHTML } from '../CustomHTML.js';
 
-export class CPSlideshow extends LocalDB {
+export class CPSlideshow extends CustomHTML {
   /** Liste des slides à afficher dans le HTML */
-  slides;
-  dots;
+  slides:any;
+  dots:any;
   shadow = this.attachShadow({ mode: 'open' });
   /** Hauteur du slider */
-  h;
+  h:string;
   /** Numéro du slide à en cours d'affichage */
   slide = 0;
+  section:HTMLElement;
+  nav:HTMLElement;
 
   static get observedAttributes() {
     return ['data-h', 'data-slides'];
@@ -22,7 +24,7 @@ export class CPSlideshow extends LocalDB {
   }
   /** Agir lorsque l'élément est initialisé */
   connectedCallback() {
-    this.attributes.h ? this.h = this.dataset.h + 'px' : this.h = '500px';
+    this.dataset['h'] ? this.h = this.dataset['h'] + 'px' : this.h = '500px';
     this.setStyles(); // Ajouter les styles des slides
 
     this.addSlides(); // Ajouter les slides à l'initialisation
@@ -36,8 +38,8 @@ export class CPSlideshow extends LocalDB {
       this.slide = 0;
     }
     // Traitement des données et création des slides
-    this.slides = JSON.parse(this.dataset.slides);
-    this.slides.forEach(s => {
+    this.slides = JSON.parse(this.dataset['slides']!);
+    this.slides.forEach((s:any) => {
       let article = document.createElement('article');
       article.classList.add('fade');
       article.setAttribute("style", "background-image:url('" + s.img + "')");
@@ -83,7 +85,7 @@ export class CPSlideshow extends LocalDB {
     this.afficheSlide(0);
   }
   /** Points cliquables */
-  setDots(n) {
+  setDots(n:any) {
     let span = document.createElement('span');
     span.classList.add('dot');
     span.addEventListener('click', () => {
@@ -92,7 +94,7 @@ export class CPSlideshow extends LocalDB {
     this.nav.appendChild(span);
   }
   /** Afficher le slide en cours */
-  afficheSlide(n) {
+  afficheSlide(n:any) {
     let slidesDOM = this.section.querySelectorAll("article");
     let dots = this.nav.querySelectorAll(".dot");
 
@@ -116,13 +118,13 @@ export class CPSlideshow extends LocalDB {
     console.log('Slideshow bougé ailleurs.');
   }
   /** Surveiller des infos */
-  attributeChangedCallback(name, oldValue, newValue) {
+  attributeChangedCallback(name:any, oldValue:any, newValue:any) {
     switch (name) {
       case 'data-h':
-        this.attributes.h ? this.h = this.dataset.h + 'px' : this.h = '500px';
+        this.dataset['h'] ? this.h = this.dataset['h'] + 'px' : this.h = '500px';
         break;
       case 'data-slides':
-        this.slides = JSON.parse(this.dataset.slides);
+        this.slides = JSON.parse(this.dataset['slides']!);
         break;
     }
   }

@@ -1,0 +1,29 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+      "baseUrl": "./",
+      "outDir": "./dist",
+      "forceConsistentCasingInFileNames": true,
+      "strict": true,
+      "noImplicitOverride": true,
+      "noPropertyAccessFromIndexSignature": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "sourceMap": false,
+      "declaration": false,
+      "downlevelIteration": true,
+      "experimentalDecorators": true,
+      "resolveJsonModule": true,
+      "moduleResolution": "node",
+      "importHelpers": true,
+      "target": "es2017",
+      "module": "es2020",
+    //   "module":"commonJS",
+      "lib": [
+        "es2020",
+        "dom"
+      ]
+    },
+    "include": ["./composants/index.ts", "./composants"],
+    "exclude": ["node_modules", "**/*.spec.ts"]
+  }

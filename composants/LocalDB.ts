@@ -1,23 +1,24 @@
-/** Hériter de possibilités de gestion des données */
-export class LocalDB extends HTMLElement {
+import { LocalStore } from "./LocalStore.js";
 
-    indexedDB;
-    open;
-    db;
-    store;
-    tx;
-    index;
+/** Hériter de possibilités de gestion des données */
+export class LocalDB extends LocalStore {
+
+    indexedDB:any;
+    open:any;
+    db:any;
+    store:any;
+    tx:any;
 
     constructor(i="WebComponent") {
         super();
     }
     /** Initialiser la base de données */
     initLocalDb() {
-        this.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+        this.indexedDB = window.indexedDB;
         this.open = this.indexedDB.open('WebComponentDB', 1); // Récupérer la version 1 de la BDD Web Component
 
         // Create the schema
-        this.open.onupgradeneeded = (ev) => {
+        this.open.onupgradeneeded = (ev = null) => {
             console.log("onupgrade");
             this.db = this.open.result;
             this.store = this.db.createObjectStore("WebComponentStore", { keyPath: "id" });
@@ -36,15 +37,15 @@ export class LocalDB extends HTMLElement {
                 console.log("transaction close");
             };
 
-            this.tx.onerror = (ev) => {
+            this.tx.onerror = (ev = null) => {
                 console.warn(this.tx.error);
             };
 
             console.log("Ouverture de la base réussie");
         }
     }
-    /** Ajouter et mettre à jour des données dans le store */
-    putStore(obj, key=null){
+    /** Add data to data store */
+    putDBStore(obj:any, key=null){
         console.log(this.store, this, this.db);
         let putS = this.store.put(obj, key);
         putS.onsuccess = () => {
@@ -52,22 +53,23 @@ export class LocalDB extends HTMLElement {
         }
     }
     /** Ajouter des données dans le store */
-    addStore(obj){
+    addDBStore(obj:any){
         let addS = this.store.add(obj);
-        putS.onsuccess = () => {
-            console.log(putS.transaction)
+        // let putS = this.store.put(obj);
+        addS.onsuccess = () => {
+            console.log(addS.transaction)
         }
     }
     /** Récupérer des données du store */
-    getStore(s){
+    getDBStore(s:string){
         let getS = this.store.get(s);
         getS.onsuccess = () => {
             console.log(getS.result)
         }
     }
     /** Récupérer des données depuis un index dans le store */
-    getIndex(i){
-        let getI = this.store.get(s);
+    getDBIndex(i:string){
+        let getI = this.store.get(i);
         getI.onsuccess = () => {
             console.log(getI.result)
         }
